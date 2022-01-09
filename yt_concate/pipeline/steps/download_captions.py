@@ -2,7 +2,6 @@ from pytube import YouTube
 import time
 
 from .step import Step
-from .step import StepException
 
 
 class DownloadCaptions(Step):
