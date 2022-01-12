@@ -13,7 +13,7 @@ class DownloadVideos(Step):
         yt_set = set([found.yt for found in data])
         print('videos to download=', len(yt_set))
 
-        with futures.ThreadPoolExecutor(max_workers=30) as executor:
+        with futures.ThreadPoolExecutor(max_workers=20) as executor:
             for yt in yt_set:
                 if utils.video_file_exists(yt):
                     print(f'found existing video file for {yt.url}, skipping')

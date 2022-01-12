@@ -1,5 +1,6 @@
 import sys
 import getopt
+# import logging
 from distutils.util import strtobool
 sys.path.append('../')
 
@@ -37,7 +38,7 @@ def main():
         'channel_id': CHANNEL_ID,
         'search_word': 'incredible',
         'limit': 20,
-        'cleanup': False,
+        'cleanup': True,
         'log_level': 'WARNING'
     }
 
@@ -71,7 +72,7 @@ def main():
                 sys.exit(2)
         elif opt == 'loglevel':
             inputs['log_level'] = arg
-            level = [DEBUG, INFO, WARNING, ERROR, CRITICAL]
+            level = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
             if inputs['log_level'] not in level:
                 print_usage()
                 sys.exit(2)
@@ -92,9 +93,12 @@ def main():
         Postflight(),
     ]
 
-    #utils = Utils()
-    #p = Pipeline(steps)
-    #p.run(inputs, utils)
+    utils = Utils()
+    #if utils.output_video_file_exists(inputs['channel_id'], inputs['search_word']):
+    #    ans = input('Output video file for the channel and the search term already exists. \n Continue downloading captions and videos? (y/n)')
+
+    p = Pipeline(steps)
+    p.run(inputs, utils)
 
 
 if __name__ == '__main__':
