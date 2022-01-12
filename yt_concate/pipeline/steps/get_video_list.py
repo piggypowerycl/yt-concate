@@ -1,4 +1,7 @@
+import sys
+
 import urllib.request
+from urllib.error import HTTPError
 import json
 
 from yt_concate.pipeline.steps.step import Step
@@ -23,12 +26,16 @@ class GetVideoList(Step):
         video_links = []
         url = first_url
         while True:
-            inp = urllib.request.urlopen(url)
-            resp = json.load(inp)
+            try:
+                inp = urllib.request.urlopen(url)
+                resp = json.load(inp)
 
-            for i in resp['items']:
-                if i['id']['kind'] == "youtube#video":
-                    video_links.append(base_video_url + i['id']['videoId'])
+                for i in resp['items']:
+                    if i['id']['kind'] == "youtube#video":
+                        video_links.append(base_video_url + i['id']['videoId'])
+            except HTTPError:
+                print('Please check whether your channel id is valid.')
+                sys.exit(2)
 
             try:
                 next_page_token = resp['nextPageToken']

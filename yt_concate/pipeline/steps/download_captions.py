@@ -18,12 +18,11 @@ class DownloadCaptions(Step):
                 print('downloading caption for', yt.id)
                 try:
                     executor.submit(self.download_captions, yt)
-                except (AttributeError, KeyError, TypeError) as e:
-                    print(e)
+                except (AttributeError, KeyError, TypeError):
                     continue
         end = time.time()
 
-        print('took', end-start, 'seconds')
+        print(f'Elapsed time = {end-start} seconds')
         return data
 
     def download_captions(self, yt):
@@ -32,6 +31,7 @@ class DownloadCaptions(Step):
             en_caption = source.captions.get_by_language_code('a.en')
             en_caption_convert_to_srt = (en_caption.generate_srt_captions())
         except (AttributeError, KeyError) as e:
+            print(e)
             return e
 
         text_file = open(yt.caption_filepath, "w", encoding='utf-8')
