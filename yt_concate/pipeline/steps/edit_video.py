@@ -1,3 +1,5 @@
+import logging
+
 from moviepy.editor import VideoFileClip
 from moviepy.editor import concatenate_videoclips
 
@@ -23,7 +25,8 @@ class EditVideo(Step):
         start, end = caption_time.split(' --> ')
         return self.parse_time_stream(start), self.parse_time_stream(end)
 
-    def parse_time_stream(self, time_str):
+    @staticmethod
+    def parse_time_stream(time_str):
         h, m, s = time_str.split(':')
         s, ms = s.split(',')
         return int(h), int(m), int(s) + int(ms)/1000

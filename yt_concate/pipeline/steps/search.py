@@ -1,9 +1,12 @@
+import logging
+
 from .step import Step
 from yt_concate.model.found import Found
 
 
 class Search(Step):
     def process(self, data, inputs, utils):
+        logger = logging.getLogger(__name__)
         search_word = inputs['search_word']
 
         found = []
@@ -17,5 +20,5 @@ class Search(Step):
                     time = captions[caption]
                     f = Found(yt, caption, time)
                     found.append(f)
-        print(len(found))
+        logger.info(f'Found {len(found)} matches in the channel')
         return found

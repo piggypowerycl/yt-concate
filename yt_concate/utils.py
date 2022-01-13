@@ -46,4 +46,4 @@ class Utils:
     def delete_dirs(self, channel_id):
         shutil.rmtree(CAPTIONS_DIR)
         shutil.rmtree(VIDEOS_DIR)
-        # os.remove(self.get_video_list_file_path(channel_id))
+        os.remove(self.get_video_list_file_path(channel_id))

@@ -1,6 +1,6 @@
 import sys
 import getopt
-# import logging
+import logging
 from distutils.util import strtobool
 sys.path.append('../')
 
@@ -20,9 +20,6 @@ from yt_concate.pipeline.pipeline import Pipeline
 from yt_concate.utils import Utils
 
 
-CHANNEL_ID = 'UCKSVUHI9rbbkXhvAXK-2uxA'  # supercar blondie
-
-
 def print_usage():
     print('python main.py OPTIONS')
     print('OPTIONS:')
@@ -33,12 +30,34 @@ def print_usage():
     print('{:>6} {:<16}{}'.format('', '--loglevel', '<DEBUG/INFO/WARNING/ERROR/CRITICAL>: level of logging function'))
 
 
+def config_log(log_level):
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+
+    file_formatter = logging.Formatter('%(levelname)s %(asctime)s %(name)s: %(message)s')
+    file_handler = logging.FileHandler('execute.log')
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(file_formatter)
+
+    stream_formatter = logging.Formatter('%(levelname)s %(name)s: %(message)s')
+    stream_handler = logging.StreamHandler()
+    log_level = eval(f'logging.{log_level}')
+    stream_handler.setLevel(log_level)
+    stream_handler.setFormatter(stream_formatter)
+
+    logger.addHandler(file_handler)
+    logger.addHandler(stream_handler)
+
+
+CHANNEL_ID = 'UCKSVUHI9rbbkXhvAXK-2uxA'  # supercar blondie
+
+
 def main():
     inputs = {
         'channel_id': CHANNEL_ID,
         'search_word': 'incredible',
         'limit': 20,
-        'cleanup': True,
+        'cleanup': False,
         'log_level': 'WARNING'
     }
 
@@ -94,11 +113,19 @@ def main():
     ]
 
     utils = Utils()
-    #if utils.output_video_file_exists(inputs['channel_id'], inputs['search_word']):
-    #    ans = input('Output video file for the channel and the search term already exists. \n Continue downloading captions and videos? (y/n)')
-
-    p = Pipeline(steps)
-    p.run(inputs, utils)
+    if utils.output_video_file_exists(inputs['channel_id'], inputs['search_word']):
+        ans = input('Output video file for channel {} and search term {} exists.\nContinue downloading '
+                    'captions and videos? (yes/no)'.format(inputs['channel_id'], inputs['search_word']))
+        if bool(strtobool(ans)):
+            config_log(inputs['log_level'])
+            p = Pipeline(steps)
+            p.run(inputs, utils)
+        else:
+            sys.exit(0)
+    else:
+        config_log(inputs['log_level'])
+        p = Pipeline(steps)
+        p.run(inputs, utils)
 
 
 if __name__ == '__main__':
